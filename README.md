@@ -1,0 +1,2 @@
+# EEIC_Bachelor_Motion_Control_Experiment
+EEICの後期実験で利用する制御プログラムを公開しています。
