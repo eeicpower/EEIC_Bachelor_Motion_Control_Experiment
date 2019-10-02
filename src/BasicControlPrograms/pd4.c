@@ -384,7 +384,7 @@ double *tmpDataI,*tmpDataXref,*tmpDataX;
 	outb(OutChar, LP0_PORT);
 	}
 
-	theta1=read_theta(1);
+	theta1=read_theta(1);//[rad]
 	
 	Data=Adtransfer(1);
 	
@@ -418,6 +418,7 @@ double *tmpDataI,*tmpDataXref,*tmpDataX;
 	resfile=fopen("/root/jikken/results/result.data","w+");
 	for(i=0;i<Tcon;i++){
 	fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataXref[i],tmpDataX[i]);
+	//File format: Time, Current, Postion(reference), Position(measured)
 	}
 	fclose(resfile);
 

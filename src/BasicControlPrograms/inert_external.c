@@ -378,6 +378,7 @@ double *tmpDataI,*tmpDataW;
 	theta1=read_theta(1);
 	
 	Data=Adtransfer(1);
+	// Analog date read(FG signal read)
 	
 	X_ref=Data*(1.0-exp(-T_smpl*(double)i));
 	//  prevention of sudden start
