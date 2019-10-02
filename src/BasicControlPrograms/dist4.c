@@ -454,8 +454,6 @@ double *tmpDataI,*tmpDataXref,*tmpDataX,*tmpDataIdist;
 		perror("art_wait");
 		exit(1);
           }
-	
-
 	}
 
 	Datransfer(1,0.0);
