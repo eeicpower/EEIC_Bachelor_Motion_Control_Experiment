@@ -23,9 +23,9 @@ int Ts,Tcon;
 /* motor constants */
 double Jn; //[kgm^2]
 //double Ktn = 0.6/2.0; //[Nm/A]
-double Ktn = 0.6; //[Nm/A]
+double Ktn = 1.2; //[Nm/V]
 	// D/A output:-10[V]~10[V]
-	// Virtual torque current:-10[A]~10[A]
+	// Virtual torque current:-5[A]~5[A]
 	// corresponding torque:-6[Nm]~6[Nm]
 
 /* controller variables definition */
@@ -344,7 +344,6 @@ double *tmpDataI,*tmpDataXref,*tmpDataX,*tmpDataIdist;
 	Vout=0.0;
 
 /* real time system open */
-      //art_enter�Υ���ץ������ϡ����ޥ�������ñ�̢�������100�ޥ������á�
       if (art_enter(ART_PRIO_MAX, ART_TASK_PERIODIC, Ts) == -1) {
           perror("art_enter");
           exit(1);
@@ -436,11 +435,13 @@ double *tmpDataI,*tmpDataXref,*tmpDataX,*tmpDataIdist;
 	Vout=I_ref;
 	if(I_ref>=I_limit) Vout = I_ref = I_limit;
 	if(I_ref<= -I_limit) Vout = I_ref = -I_limit;
+
 	Datransfer(1,Vout);
+	Datransfer(2,I_dist);
 	tmpDataI[i]=I_ref;
 	tmpDataX[i]=X;
 	tmpDataXref[i]=X_ref;
-	tmpDataIdist[i]=I_dist;
+	tmpDataIdist[i]=I_dist*Ktn;
 
          if (art_wait() == -1) {
 		Datransfer(1,0.0);
@@ -453,13 +454,15 @@ double *tmpDataI,*tmpDataXref,*tmpDataX,*tmpDataIdist;
 		perror("art_wait");
 		exit(1);
           }
-	Datransfer(2,X);
+	
 
 	}
+
 	Datransfer(1,0.0);
 	resfile=fopen("/root/jikken/results/result.data","w+");
 	for(i=0;i<Tcon;i++){
-	fprintf(resfile,"%f %f %f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataXref[i],tmpDataX[i],Ktn*tmpDataIdist[i]);
+	fprintf(resfile,"%f %f %f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataXref[i],tmpDataX[i],tmpDataIdist[i]);
+	//File format: Time, Current, Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]
 	}
 	fclose(resfile);
 
