@@ -2,7 +2,7 @@
 EEICの後期実験で利用する制御プログラムを公開しています。
 ## プログラム構成
 src---BasicControlPrograms----Makefile  
-    |                      |--inert_external.c  
+　　|                      |--inert_external.c  
     |                      |--inert_internal.c  
     |                      |--pd4.c  
     |                      |--dist4.c  
