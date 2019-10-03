@@ -22,6 +22,7 @@
 
 int Ts,Tcon;
 
+double Jn=0.0;
 /* motor constants */
 double Ktn = 0.6; //[Nm/A]
 	//motor is converted in 2015
@@ -40,6 +41,7 @@ double T_smpl=0.0, Time = 0.0;
 double a0X, b0X, c0X;
 double I0, ddX;
 double I01, I01_1=0.0, I0n, I0n_1=0.0;
+double pi=3.14159265359;
 
 /*----------------------------------------------*/
 double control(double X_r,double Xs)
