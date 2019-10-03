@@ -415,7 +415,7 @@ double *tmpDataI,*tmpDataXref,*tmpDataX;
 	Datransfer(2,X);
 	}
 	Datransfer(1,0.0);
-	resfile=fopen("/root/jikken/results/result.data","w+");
+	resfile=fopen("result.data","w+");
 	for(i=0;i<Tcon;i++){
 	fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataXref[i],tmpDataX[i]);
 	//File format: Time, Current, Postion(reference), Position(measured)
