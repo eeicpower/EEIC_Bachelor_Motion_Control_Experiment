@@ -419,7 +419,7 @@ double *tmpDataI,*tmpDataW;
 
 
 	Datransfer(1,0.0);
-	resfile=fopen("result.data","w+");
+	resfile=fopen("result_ID.csv","w+");
 	for(i=0;i<Tcon;i++){
 	fprintf(resfile,"%f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataW[i]);
 	//File format: Time, Current, Angular speed

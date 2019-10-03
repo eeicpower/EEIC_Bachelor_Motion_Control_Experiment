@@ -437,7 +437,7 @@ double *tmpDataI,*tmpDataXref,*tmpDataX;
 	Datransfer(2,X);
 	}
 	Datransfer(1,0.0);
-	resfile=fopen("resultpid.dat","w+");
+	resfile=fopen("result_PID.csv","w+");
 	for(i=0;i<Tcon;i++){
 	fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataXref[i],tmpDataX[i]);
 	}
