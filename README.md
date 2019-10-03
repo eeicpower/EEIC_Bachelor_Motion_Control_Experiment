@@ -1,19 +1,19 @@
 # EEIC_Bachelor_Motion_Control_Experiment
 EEICの後期実験で利用する制御プログラムを公開しています。
 ## プログラム構成
-src---BasicControlPrograms----Makefile
-    |                      |--inert_external.c
-    |                      |--inert_internal.c
-    |                      |--pd4.c
-    |                      |--dist4.c
-    |
-    |-AdvancedControlPrograms---ChirpIdentification----Makefile
-                              |                     |--inert_chirp.c
-                              |                     |--chirp.c
-                              |                     |--chirp.h
-                              |
-                              |--SimplePID-------------Makefile
-                                                    |--pid.c
+src---BasicControlPrograms----Makefile  
+    |                      |--inert_external.c  
+    |                      |--inert_internal.c  
+    |                      |--pd4.c  
+    |                      |--dist4.c  
+    |  
+    |-AdvancedControlPrograms---ChirpIdentification----Makefile  
+                              |                     |--inert_chirp.c  
+                              |                     |--chirp.c  
+                              |                     |--chirp.h  
+                              |  
+                              |--SimplePID-------------Makefile  
+                                                    |--pid.c  
                                                     
 ## BasicControlPrograms
 　実験のうち必ず行う制御に関するプログラムが入っています。
