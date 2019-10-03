@@ -402,16 +402,16 @@ double *tmpDataI,*tmpDataXref,*tmpDataX;
 	tmpDataXref[i]=X_ref;
 	tmpDataX[i]=X;
 
-         if (art_wait() == -1) {
+	if (art_wait() == -1) {
 		Datransfer(1,0.0);
 		outb(0, LP0_PORT);
 		free(tmpDataI);
 		free(tmpDataX);
 		free(tmpDataXref);
-
 		perror("art_wait");
 		exit(1);
-          }
+	}
+	
 	Datransfer(2,X);
 	}
 	Datransfer(1,0.0);
