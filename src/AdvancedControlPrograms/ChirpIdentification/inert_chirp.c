@@ -311,7 +311,6 @@ double *tmpDataI,*tmpDataX;
 	Vout=0.0;
 
 /* real time system open */
-      //art_enter�Υ���ץ������ϡ����ޥ�������ñ�̢�������100�ޥ������á�
       if (art_enter(ART_PRIO_MAX, ART_TASK_PERIODIC, Ts) == -1) {
           perror("art_enter");
           exit(1);
@@ -426,7 +425,7 @@ double *tmpDataI,*tmpDataX;
 
 
 	Datransfer(1,0.0);
-	resfile=fopen("/root/forTA/result.data","w+");
+	resfile=fopen("result.data","w+");
 	for(i=0;i<Tcon;i++){
 	fprintf(resfile,"%f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataX[i]);
 	}

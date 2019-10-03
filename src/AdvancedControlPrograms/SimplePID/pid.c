@@ -323,7 +323,7 @@ double *tmpDataI,*tmpDataXref,*tmpDataX;
 	Vout=0.0;
 
 /* real time system open */
-      //art_enter�Υ���ץ������ϡ����ޥ�������ñ�̢�������100�ޥ������á�
+      
       if (art_enter(ART_PRIO_MAX, ART_TASK_PERIODIC, Ts) == -1) {
           perror("art_enter");
           exit(1);
@@ -437,7 +437,7 @@ double *tmpDataI,*tmpDataXref,*tmpDataX;
 	Datransfer(2,X);
 	}
 	Datransfer(1,0.0);
-	resfile=fopen("/root/jikken2018/team2/reslt/resultpid.dat","w+");
+	resfile=fopen("resultpid.dat","w+");
 	for(i=0;i<Tcon;i++){
 	fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataI[i],tmpDataXref[i],tmpDataX[i]);
 	}
