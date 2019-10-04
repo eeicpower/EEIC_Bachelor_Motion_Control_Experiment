@@ -1,5 +1,6 @@
 %% simulation set
-close all
+clear allvars;
+close all;
 freq = 1000; %1000hz
 Ts = 1/freq; %Sampling time
 Tc = 2; %Chirp period
@@ -16,8 +17,9 @@ for Nlist = 1:length(list)
     filedir = strcat('ChirpResults/',list(Nlist));
     
     %% read data and set in/out data
-
-    load(filedir); % Load file data
+    clear result;
+    
+    result=load(filedir); % Load file data
 
     time = result(:,1); %time
     in = result(:,2)*Kt; %Input: Torque 
