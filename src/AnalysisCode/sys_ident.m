@@ -1,5 +1,5 @@
 %% simulation set
-clear allvars;
+clearvars;
 close all;
 freq = 1000; %1kHz
 Ts = 1/freq; %Sampling time
