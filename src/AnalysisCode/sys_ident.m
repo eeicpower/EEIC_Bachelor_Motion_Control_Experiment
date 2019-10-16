@@ -1,10 +1,17 @@
 %% simulation set
 clear allvars;
 close all;
-freq = 1000; %1000hz
+freq = 1000; %1kHz
 Ts = 1/freq; %Sampling time
-Tc = 2; %Chirp period
-Kt = 1.2; %transformation ratio from V to Nm 
+Tc = 5; %Chirp period
+Kt = 1.8; %transformation ratio from V to Nm 
+
+%% tfest fitting part
+Nz = 0;%Number of zeros of the plant
+Np = 1;%Number of poles of the plant
+fmin=0.1; %minimum freq of chirp signal 
+fmax=100; %maximum freq of chirp signal
+Td = 0:0.1e-3:5e-3;% DelayTime search range: 0 to 5ms with 0.1ms step
 
 
 
@@ -25,9 +32,9 @@ for Nlist = 1:length(list)
     in = result(:,2)*Kt; %Input: Torque 
     out = result(:,3); %Output: Angular speed 
 
-    figure(1); plot(time,in,time,out);
+    figure(); plot(time,in,time,out);
     xlabel('time[s]')
-    ylabel('in[A]/out[rad/s]')
+    ylabel('in[Nm]/out[rad/s]')
     legend('In','Out')
     grid on;
 
@@ -50,15 +57,14 @@ for Nlist = 1:length(list)
     %% mscoherence
     [COHER,cFREQ] = mscohere(in,out,rectwin(Tc/Ts),0,Tc/Ts,freq);
 
-    figure(3); semilogx(cFREQ,COHER);
+    figure(); semilogx(cFREQ,COHER);
+    xlabel('Frequency[Hz]')
+    ylabel('Coherence')
+    grid on;
+    xlim([0.1 500]);
+    
 
     %%%%%% from here Matlab needs SystemIdentificationToolbox %%%%%%%%%%%%%
-    %% tfest fitting part
-    Nz = 0;%Number of zeros of the plant
-    Np = 1;%Number of poles of the plant
-    fmin=0.5; %minimum freq of chirp signal 
-    fmax=50; %maximum freq of chirp signal
-    Td = 0:0.1e-3:5e-3;% DelayTime search range: 0 to 5ms with 0.1ms step
 
     [~,kmin]=min(abs(fmin-Pfrd.freq));%search data point index corresponding to fmin
     [~,kmax]=min(abs(fmax-Pfrd.freq));%search data point index corresponding to fmax
@@ -71,6 +77,9 @@ for Nlist = 1:length(list)
     init_sys.Structure.Numerator.Maximum = inf;
     init_sys.Structure.Denominator.Minimum = 0;
     init_sys.Structure.Denominator.Maximum = inf;
+    
+    %Coherence shaping
+    COHER(COHER<0.9)=0;
 
     tfopt = tfestOptions('WeightingFilter',COHER(kmin:kmax).*FREQ(kmin:kmax));%Weighting with coherence
 
@@ -89,6 +98,7 @@ for Nlist = 1:length(list)
     figure();
 
     bode(Pfrd,opt,Pest_most,opt);
+    legend({'Measured data','Estimated'});
     xlim([0.1 500]);
     title(strcat('Freq responce - ',num2str(Pest_most.IODelay*1e3),'ms IODeelay'))
 
