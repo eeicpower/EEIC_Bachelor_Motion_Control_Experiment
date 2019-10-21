@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
 	////////////////* sampling time *//////////////
 	///////////////////////////////////////////////
 	Ts=0;
-	while(Ts =< 0){
+	while(Ts <= 0){
 		printf("\n sampling time [us] (1000 us):");
 		scanf("%d",&Ts);
 	}
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 	printf("\n Kd (derivative gain) :");
 	scanf("%lf",&Kd);
 	Tau=-1;
-	while(Tau=<0){
+	while(Tau<=0){
 		printf("\n Tau (Low pass filter time constant [ms]) (5ms) :");
 		scanf("%lf",&Tau);
 	}
@@ -443,8 +443,8 @@ int main(int argc, char *argv[])
 		T_ref=control(X_ref,X);
 		Vout=T_ref; //Torque -> Voltage reference
 
-		if(T_ref>=V_limit) Vout = T_ref = V_limit;
-		if(T_ref<= -V_limit) Vout = T_ref = -V_limit;
+		if(Vout>=V_limit) Vout = V_limit;
+		if(Vout<=-V_limit) Vout = -V_limit;
 
 		Datransfer(1,Vout);
 		Datransfer(2,X);
@@ -469,7 +469,7 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("result_PD.csv","w+");
-		printf("\n File format: Time, Current, Postion(reference), Position(measured)\n");
+	printf("\n File format: Time, Current, Postion(reference), Position(measured)\n");
 	for(i=0;i<Tcon;i++){
 		fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataT[i],tmpDataXref[i],tmpDataX[i]);
 		//File format: Time, Current, Postion(reference), Position(measured)
