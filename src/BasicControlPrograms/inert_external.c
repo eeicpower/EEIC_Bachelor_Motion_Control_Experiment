@@ -37,7 +37,7 @@ double Max_T = 9.0;
 /* controller variables definition */
 double X, T_ref;
 double dX;
-double Tr, Zt, Kp, Kd;
+double Kp, Kd;
 double Tau;
 double T_smpl=0.0;
 double a0X, b0X, c0X;
