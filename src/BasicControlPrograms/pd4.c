@@ -36,33 +36,32 @@ double Max_T = 9.0;
 /* controller variables definition */
 double T_ref=0.0;
 double X, X_ref;
-double dX;
 double Kp, Kd;
 double Tau;
 double T_smpl=0.0;
 double a0X, b0X, c0X;
-double I0,ddX;
-double I01, I01_1=0.0, I0n, I0n_1=0.0;
+double V0,dX,ddX;
+double V01, V01_1=0.0, V0n, V0n_1=0.0;
 
 ///////////////////////////////////////////////
 //////////* Controller disign *////////////////
 ///////////////////////////////////////////////
 /*----------------------------------------------*/
-double control(double X_r,double Xs)
+double control(double Xref,double Xmeas)
 {
-/* IO */
-	dX = X_r - Xs;
-	I0n = dX - a0X*I01_1;
-	I01 = I01_1 + (I0n_1 +I0n)*T_smpl/2.0;
-	ddX = c0X * dX - b0X * I01;
+/* VO */
+	dX = Xref - Xmeas;
+	V0n = dX - a0X*V01_1;
+	V01 = V01_1 + (V0n_1 +V0n)*T_smpl/2.0;
+	ddX = c0X * dX - b0X * V01;
 
-	I0n_1 = I0n;
-	I01_1 = I01;
+	V0n_1 = V0n;
+	V01_1 = V01;
 	
-	I0 = Kp * dX + Kd * ddX;
+	V0 = Kp * dX + Kd * ddX;
 
 /* Vout */
-	return I0;
+	return V0;
 }
 /*----------------------------------------------*/
 
@@ -291,7 +290,7 @@ int main(int argc, char *argv[])
 		printf("\n Torque limit [Nm] (9.0 Nm) :");
 		scanf("%lf",&V_limit);
 	}
-	V_limit/=Ktn; 
+	V_limit/=Ktn; //torque converted into voltage
 
 	///////////////////////////////////////////////
 	////////////* control variables *//////////////
