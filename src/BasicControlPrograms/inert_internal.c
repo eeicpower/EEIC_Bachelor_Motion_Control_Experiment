@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 	ADSMPLREQ Smplreq;
 	DASMPLREQ Conf;
 	FILE *resfile;
-	double *tmpDataT, *tmpDataW;
+	double *tmpDataV, *tmpDataW;
 
 	///////////////////////////////////////////////
 	////////////////* sampling time *//////////////
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 	}
 	Tcon = Tcon*1000000/Ts;
 
-	tmpDataT=calloc(Tcon, sizeof(double));
+	tmpDataV=calloc(Tcon, sizeof(double));
 	tmpDataW=calloc(Tcon, sizeof(double));
 
 	////////////////////////////////////////////
@@ -459,13 +459,13 @@ int main(int argc, char *argv[])
 		X_old=X;
 
 		tmpDataW[i]=W;
-		tmpDataT[i]=Vout;
+		tmpDataV[i]=Vout;
 		Datransfer(2,W/10.0);
 		
 		if (art_wait() == -1) {
 			Datransfer(1,0.0);
 			outb(0, LP0_PORT);
-			free(tmpDataT);
+			free(tmpDataV);
 			free(tmpDataW);
 
 			perror("art_wait");
@@ -476,14 +476,14 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("Result_ID.csv","w+");
-	printf("\n File format: Time, Current, Angular speed\n");
+	printf("\n File format: Time, Voltage(Torque), Angular speed\n");
 	for(i=0;i<Tcon;i++){
-		fprintf(Resfile,"%f %f %f\n",i*T_smpl,tmpDataT[i],tmpDataW[i]);
-		//File format: Time, Current, Angular speed
+		fprintf(Resfile,"%f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataW[i]);
+		//File format: Time, Voltage(Torque), Angular speed
 	}
 	fclose(Resfile);
 
-	free(tmpDataT);
+	free(tmpDataV);
 	free(tmpDataW);
 
 	/////////////////////////////////////////////

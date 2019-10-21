@@ -266,13 +266,13 @@ int main(int argc, char *argv[])
 {
 	int i, cntnum, beep;
 	unsigned char 	OutChar=0;
-	double theta1, ExtRef, Vout;
+	double ExtRef, Vout;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
 	DASMPLREQ Conf;
 	FILE *resfile;
-	double *tmpDataT,*tmpDataXref,*tmpDataX;
+	double *tmpDataV,*tmpDataXref,*tmpDataX;
 
 	///////////////////////////////////////////////
 	////////////////* sampling time *//////////////
@@ -314,7 +314,7 @@ int main(int argc, char *argv[])
 	/////* printout of the control parameters *////
 	///////////////////////////////////////////////
 	printf("\n motor constants :\n Ktn = %f [Nm/V]" ,Ktn);
-	printf("\n position controller gain :\n Kp = %f [A/rad], Kd = %f [A/(rad/s)]",Kp,Kd);
+	printf("\n position controller gain :\n Kp = %f [V/rad], Kd = %f [V/(rad/s)]",Kp,Kd);
 
 	///////////////////////////////////////////////
 	//set control loop counter and start control///
@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
 	}
 	Tcon = Tcon*1000000/Ts;
 
-	tmpDataT=calloc(Tcon, sizeof(double));
+	tmpDataV=calloc(Tcon, sizeof(double));
 	tmpDataX=calloc(Tcon, sizeof(double));
 	tmpDataXref=calloc(Tcon, sizeof(double));
 
@@ -453,7 +453,7 @@ int main(int argc, char *argv[])
 		Datransfer(1,Vout);
 		Datransfer(2,X);
 		
-		tmpDataT[i]=T_ref;
+		tmpDataV[i]=T_ref;
 		tmpDataXref[i]=X_ref;
 		tmpDataX[i]=X;
 
@@ -461,7 +461,7 @@ int main(int argc, char *argv[])
 		if (art_wait() == -1) {
 			Datransfer(1,0.0);
 			outb(0, LP0_PORT);
-			free(tmpDataT);
+			free(tmpDataV);
 			free(tmpDataX);
 			free(tmpDataXref);
 
@@ -473,14 +473,14 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("result_PD.csv","w+");
-	printf("\n File format: Time, Current, Postion(reference), Position(measured)\n");
+	printf("\n File format: Time, Voltage(Torque), Postion(reference), Position(measured)\n");
 	for(i=0;i<Tcon;i++){
-		fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataT[i],tmpDataXref[i],tmpDataX[i]);
-		//File format: Time, Current, Postion(reference), Position(measured)
+		fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataXref[i],tmpDataX[i]);
+		//File format: Time, Voltage(Torque), Postion(reference), Position(measured)
 	}
 	fclose(resfile);
 
-	free(tmpDataT);
+	free(tmpDataV);
 	free(tmpDataX);
 	free(tmpDataXref);
 
