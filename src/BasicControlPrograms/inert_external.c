@@ -36,35 +36,7 @@ double Max_T = 9.0;
 
 /* controller variables definition */
 double X, T_ref;
-double dX;
-double Kp, Kd;
-double Tau;
 double T_smpl=0.0;
-double a0X, b0X, c0X;
-double I0, ddX;
-double I01, I01_1=0.0, I0n, I0n_1=0.0;
-
-///////////////////////////////////////////////
-//////////* Controller disign *////////////////
-///////////////////////////////////////////////
-/*----------------------------------------------*/
-double control(double X_r,double Xs)
-{
-/* IO */
-	dX = X_r - Xs;
-	I0n = dX - a0X*I01_1;
-	I01 = I01_1 + (I0n_1 +I0n)*T_smpl/2.0;
-	ddX = c0X * dX - b0X * I01;
-
-	I0n_1 = I0n;
-	I01_1 = I01;
-	
-	I0 = Kp * dX + Kd * ddX;
-
-/* Vout */
-	return I0;
-}
-/*----------------------------------------------*/
 
 
 ///////////* encorder initialize *////////////
