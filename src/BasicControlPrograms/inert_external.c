@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 	////////////////* sampling time *//////////////
 	///////////////////////////////////////////////
 	Ts=0;
-	while(Ts =< 0){
+	while(Ts <= 0){
 		printf("\n sampling time [us] (1000 us):");
 		scanf("%d",&Ts);
 	}
