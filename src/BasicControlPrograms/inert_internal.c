@@ -52,8 +52,8 @@ int enc_init(){
 ///////////* Ana->Dig transfer *//////////////
 static double Adtransfer(int ch)
 {
-unsigned short SmplAd=0;
-unsigned char lmb,hmb;
+	unsigned short SmplAd=0;
+	unsigned char lmb,hmb;
 	switch(ch){
 	case 1:
 	outb(0x40,ADADRES0);
