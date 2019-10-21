@@ -286,7 +286,7 @@ int main(int argc, char *argv[])
 	///////////////////////////////////////////////
 	V_limit=-1;
 	while(V_limit < 0 && V_limit > Max_T){
-		printf("\n Torque limit [Nm] (3.6 Nm) :");
+		printf("\n Torque limit [Nm] (9.0 Nm) :");
 		scanf("%lf",&V_limit);
 	}
 	V_limit/=Ktn; 
@@ -453,6 +453,7 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("Result_ID.csv","w+");
+	printf("\n File format: Time, Current, Angular speed\n");
 	for(i=0;i<Tcon;i++){
 		fprintf(Resfile,"%f %f %f\n",i*T_smpl,tmpDataT[i],tmpDataW[i]);
 		//File format: Time, Current, Angular speed
