@@ -41,59 +41,58 @@ double Kp, Kd;
 double Tau;
 double T_smpl=0.0;
 double a0X, b0X, c0X;
-double I0,ddX;
-double I01, I01_1=0.0, I0n,I0n_1=0.0;
+double V0,ddX;
+double V01, V01_1=0.0, V0n,V0n_1=0.0;
 double Tq;
 double a0, a1, b0, b1, c0;
-double I1;
-double I11, I11_1=0.0, I12, I12_1=0.0, I1n, I1n_1=0.0;
-double I2, I2d;
-double I21d, I21d_1=0.0, I22d, I22d_1=0.0, I2nd, I2nd_1=0.0;
+double V1;
+double V11, V11_1=0.0, V12, V12_1=0.0, V1n, V1n_1=0.0;
+double V2, V2d;
+double V21d, V21d_1=0.0, V22d, V22d_1=0.0, V2nd, V2nd_1=0.0;
 double V_dist = 0.0;
 
 ///////////////////////////////////////////////
 //////////* Controller disign *////////////////
 ///////////////////////////////////////////////
 /*----------------------------------------------*/
-double control(double X_r,double Xs)
+double control(double Xref,double Xmeas,double Vref)
 {
-	double I_r;
-/* IO */
-	dX = X_r - Xs;
-	I0n = dX - a0X*I01_1;
-	I01 = I01_1 + (I0n_1 +I0n)*T_smpl/2.0;
-	ddX = c0X * dX - b0X * I01;
+	double Vout;
+/* VO */
+	dX = Xref - Xmeas;
+	V0n = dX - a0X*V01_1;
+	V01 = V01_1 + (V0n_1 +V0n)*T_smpl/2.0;
+	ddX = c0X * dX - b0X * V01;
 
-	I0n_1 = I0n;
-	I01_1 = I01;
+	V0n_1 = V0n;
+	V01_1 = V01;
 	
-	I0 = Kp * dX + Kd * ddX;
+	V0 = Kp * dX + Kd * ddX;
 
-/* I1 */
-	I1n = Vout - a1*I12_1 - a0*I11_1;
-	I12 = I12_1 + (I1n_1 + I1n)*T_smpl/2.0;
-	I11 = I11_1 + (I12_1 + I12)*T_smpl/2.0;
-	I1  = b0*I11;
+/* V1 */
+	V1n = Vref - a1*V12_1 - a0*V11_1; //Vd = Tref - a1*Vd_int -a0*Vd_int2
+	V12 = V12_1 + (V1n_1 + V1n)*T_smpl/2.0; //first integration Vd_int
+	V11 = V11_1 + (V12_1 + V12)*T_smpl/2.0; //second integration Vd_int2
+	V1  = b0*V11; // V_lowpass = b0*Vd_int2
 
-	I1n_1 = I1n;
-	I12_1 = I12;
-	I11_1 = I11;
+	V1n_1 = V1n;
+	V12_1 = V12;
+	V11_1 = V11;
 
-/* I2 */
-	I2nd = Xs - a1*I22d_1 - a0*I21d_1;
-	I22d = I22d_1 + (I2nd_1 + I2nd)*T_smpl/2.0;
-	I21d = I21d_1 + (I22d_1 + I22d)*T_smpl/2.0;
-	I2d  = b0*I21d + b1*I22d;
-	I2   = c0*(Xs-I2d);
+/* V2 */
+	V2nd = Xmeas - a1*V22d_1 - a0*V21d_1; //Vnd = X - a1*Vnd_int - a0*Vnd_int2
+	V22d = V22d_1 + (V2nd_1 + V2nd)*T_smpl/2.0;//Vnd_int
+	V21d = V21d_1 + (V22d_1 + V22d)*T_smpl/2.0;//Vnd_int2
+	V2   = c0*(Xmeas - b0*V21d - b1*V22d);//V_observed=c0*(1-TF)*X
 	
-	I2nd_1 = I2nd;
-	I22d_1 = I22d;
-	I21d_1 = I21d;
+	V2nd_1 = V2nd;
+	V22d_1 = V22d;
+	V21d_1 = V21d;
 
 /* Vout */
-	V_dist = I1 - I2;
-	I_r = I0 + V_dist;
-	return I_r;
+	V_dist = V1 - V2;//Disturbance converted into voltage
+	Vout = V0 + V_dist;
+	return Vout;
 }
 /*----------------------------------------------*/
 
@@ -295,13 +294,13 @@ int main(int argc, char *argv[])
 {
 	int i, cntnum, beep;
 	unsigned char 	OutChar=0;
-	double theta1, ExtRef, Vout;
+	double ExtRef, Vout=0.0;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
 	DASMPLREQ Conf;
 	FILE *resfile;
-	double *tmpDataT,*tmpDataXref,*tmpDataX,*tmpDataTdist;
+	double *tmpDataV,*tmpDataXref,*tmpDataX,*tmpDataTdist;
 
 	///////////////////////////////////////////////
 	////////////////* sampling time *//////////////
@@ -343,6 +342,7 @@ int main(int argc, char *argv[])
 	a0X=1.0/Tau;
 	b0X=1.0/Tau/Tau;
 	c0X=1.0/Tau;
+
 	Tq=-1;
 	while(Tq<=0){
 		printf("\n Tq (time const. of Q [ms]) (10ms) :");
@@ -359,8 +359,8 @@ int main(int argc, char *argv[])
 	///////////////////////////////////////////////
 	/////* printout of the control parameters *////
 	///////////////////////////////////////////////
-	printf("\n motor constants :\n Jn = %f [kgm2], Ktn = %f [Nm/A]",Jn,Ktn);
-	printf("\n position controller gain :\n Kp = %f [A/rad], Kd = %f [A/(rad/s)]",Kp,Kd);
+	printf("\n motor constants :\n Jn = %f [kgm2], Ktn = %f [Nm/V]",Jn,Ktn);
+	printf("\n position controller gain :\n Kp = %f [V/rad], Kd = %f [V/(rad/s)]",Kp,Kd);
 	printf("\n Q filter parameters :\n Tq = %f [ms]",Tq*1000.0);
 
 	///////////////////////////////////////////////
@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
 	}
 	Tcon = Tcon*1000000/Ts;
 
-	tmpDataT=calloc(Tcon, sizeof(double));
+	tmpDataV=calloc(Tcon, sizeof(double));
 	tmpDataX=calloc(Tcon, sizeof(double));
 	tmpDataXref=calloc(Tcon,sizeof(double));
 	tmpDataTdist=calloc(Tcon,sizeof(double));
@@ -493,7 +493,7 @@ int main(int argc, char *argv[])
 		ExtRef=Adtransfer(1);
 		X_ref=ExtRef*(1.0-exp(-T_smpl*(double)i));
 	//	X_ref=ExtRef;
-		Vout=control(X_ref,X);
+		Vout=control(X_ref,X,Vout);
 
 		if(Vout>=V_limit) Vout = V_limit;
 		if(Vout<= -V_limit) Vout = -V_limit;
@@ -501,7 +501,7 @@ int main(int argc, char *argv[])
 		Datransfer(1,Vout);
 		Datransfer(2,V_dist);
 
-		tmpDataT[i]=Vout;
+		tmpDataV[i]=Vout;
 		tmpDataX[i]=X;
 		tmpDataXref[i]=X_ref;
 		tmpDataTdist[i]=V_dist*Ktn;
@@ -509,7 +509,7 @@ int main(int argc, char *argv[])
 		if (art_wait() == -1) {
 			Datransfer(1,0.0);
 			outb(0, LP0_PORT);
-			free(tmpDataT);
+			free(tmpDataV);
 			free(tmpDataX);
 			free(tmpDataXref);
 			free(tmpDataTdist);
@@ -521,14 +521,14 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("result_DOB.csv","w+");
-	printf("\n File format: Time, Current, Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]\n");
+	printf("\n File format: Time, Voltage(Torque), Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]\n");
 	for(i=0;i<Tcon;i++){
-		fprintf(resfile,"%f %f %f %f %f\n",i*T_smpl,tmpDataT[i],tmpDataXref[i],tmpDataX[i],tmpDataTdist[i]);
-		//File format: Time, Current, Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]
+		fprintf(resfile,"%f %f %f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataXref[i],tmpDataX[i],tmpDataTdist[i]);
+		//File format: Time, Voltage(Torque), Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]
 	}
 	fclose(resfile);
 
-	free(tmpDataT);
+	free(tmpDataV);
 	free(tmpDataX);
 	free(tmpDataXref);
 	free(tmpDataTdist);
