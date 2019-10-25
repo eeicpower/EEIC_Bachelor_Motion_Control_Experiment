@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
 		Vout=T_ref;//Torque -> Voltage reference
 
 		if(Vout>=V_limit) Vout = V_limit;
-		if(Vout<= -V_limit) Vout = -V_limit;
+		if(Vout<=-V_limit) Vout = -V_limit;
 
 		Datransfer(1,Vout);//Output signal
 
