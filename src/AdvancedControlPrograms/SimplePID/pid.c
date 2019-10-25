@@ -36,15 +36,11 @@ double Max_T = 9.0;
 /* controller variables definition */
 double T_ref=0.0;
 double X, X_ref;
-//double u_x, u, uxn_1=0.0, iu=0.0, iu_1=0.0, u_1=0.0, du;
 double Kp, Kd, Ki;
 double Tau;
 double T_smpl=0.0;
 double a1, b0, b1, c0;
-//double c1, c2, cu;
 double dX,ddX;
-//double I01, I01_1=0.0, I0n,I0n_1=0.0;
-//double x1=0.0,x1n=0.0,x2=0.0,x1n_1=0.0,x2n=0.0,x2n_1=0.0, x2n_2=0.0;
 double Vn=0.0, Vn_1=0.0, V1=0.0, V1_1=0.0, V2=0.0, V2_1=0.0, V0;
 /*----------------------------------------------*/
 double control(double Xref,double Xmeas)
@@ -61,23 +57,6 @@ double control(double Xref,double Xmeas)
 	Vn_1 = Vn;
 	V1_1 = V1;
 	V2_1 = V2;
-
-/*
-	u = Xref - Xmeas; 
-
-	u_x = u - x2n_1/Tau;
-	x2n = x2n_1 + (u_x+uxn_1)*T_smpl/2.0;
-	du = u/Tau - x2n/Tau/Tau;
-
-	iu = iu_1 + (u+u_1)*T_smpl/2.0;
-	
-	V0=Ki*iu + Kd*du + Kp*u;
-
-	uxn_1 = u_x;
-	u_1 = u;
-	iu_1 = iu;
-	x2n_1=x2n;
-*/
 
 /* Vout */
 	return V0;
@@ -335,7 +314,7 @@ int main(int argc, char *argv[])
 	/////* printout of the control parameters *////
 	///////////////////////////////////////////////
 	printf("\n motor constants :\n Ktn = %f [Nm/V]" ,Ktn);
-	printf("\n position controller gain :\n Kp = %f [V/rad], Kd = %f [V/(rad/s)]",Kp,Kd);
+	printf("\n position controller gain :\n Kp = %f [V/rad], Kd = %f [V/(rad/s)], Ki = %f [V/rad/s]",Kp,Kd,Ki);
 
 	///////////////////////////////////////////////
 	//set control loop counter and start control///
@@ -493,8 +472,9 @@ int main(int argc, char *argv[])
 	}
 
 	Datransfer(1,0.0);
-	resfile=fopen("result_PD.csv","w+");
-	printf("\n File format: Time, Voltage(Torque), Postion(reference), Position(measured)\n");
+	resfile=fopen("result_PID.csv","w+");
+	printf("\n File format: Time, Voltage(Torque reference), Postion(reference), Position(measured)\n");
+	printf("File exporting... \n");
 	for(i=0;i<Tcon;i++){
 		fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataXref[i],tmpDataX[i]);
 		//File format: Time, Voltage(Torque), Postion(reference), Position(measured)
