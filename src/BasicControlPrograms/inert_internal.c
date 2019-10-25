@@ -50,6 +50,7 @@ int enc_init(){
 //////////////////////////////////////////////
 
 ///////////* Ana->Dig transfer *//////////////
+/*
 static double Adtransfer(int ch)
 {
 	unsigned short SmplAd=0;
@@ -114,6 +115,7 @@ static double Adtransfer(int ch)
 	}
 	return (double)(20.0*SmplAd)/4096.0-10.0;
 }
+*/
 //////////////////////////////////////////////
 
 ///////////* Dig->Ana transfer *//////////////
@@ -241,7 +243,7 @@ int main(int argc, char *argv[])
 	///////////////////////////////////////////////
 	int i, cntnum, beep;
 	unsigned char 	OutChar=0;
-	double theta1, ExtRef, Vout=0.0, W=0.0, X_old=0.0;
+	double ExtRef, Vout=0.0, W=0.0, X_old=0.0;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
@@ -269,7 +271,9 @@ int main(int argc, char *argv[])
 	V_limit/=Ktn; 
 
 
-/* current amplitude */
+	///////////////////////////////////////////////
+	////////////* current amplitude *//////////////
+	///////////////////////////////////////////////
 	Ta=-1;
 	while(Ta < 0 && Ta > Max_T){
 		printf("\n Torque amplitude [Nm] (3.6 Nm) :");
@@ -277,7 +281,9 @@ int main(int argc, char *argv[])
 	}
 	Ta/=Ktn; 
 
-/* frequency */
+	///////////////////////////////////////////////
+	///////////////* frequency *///////////////////
+	///////////////////////////////////////////////
 	Freq=-1;
 	while(Freq < 0.1){
 		printf("\n Freq (frequency [Hz]) (0.5 - 50 [Hz]) :");
@@ -447,7 +453,8 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("Result_ID.csv","w+");
-	printf("\n File format: Time, Voltage(Torque), Angular speed\n");
+	printf("\n File format: Time, Voltage(Torque reference), Angular speed\n");
+	printf("File exporting... \n");
 	for(i=0;i<Tcon;i++){
 		fprintf(resfile,"%f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataW[i]);
 		//File format: Time, Voltage(Torque), Angular speed
