@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
 	////////////////* current limit *//////////////
 	///////////////////////////////////////////////
 	V_limit=-1;
-	while(V_limit < 0 && V_limit > Max_T){
+	while(V_limit < 0 || V_limit > Max_T){
 		printf("\n Torque limit [Nm] (9.0 Nm) :");
 		scanf("%lf",&V_limit);
 	}
@@ -449,10 +449,10 @@ int main(int argc, char *argv[])
 	resfile=fopen("Result_ID.csv","w+");
 	printf("\n File format: Time, Voltage(Torque), Angular speed\n");
 	for(i=0;i<Tcon;i++){
-		fprintf(Resfile,"%f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataW[i]);
+		fprintf(resfile,"%f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataW[i]);
 		//File format: Time, Voltage(Torque), Angular speed
 	}
-	fclose(Resfile);
+	fclose(resfile);
 
 	free(tmpDataV);
 	free(tmpDataW);
