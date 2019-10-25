@@ -472,7 +472,8 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("result_PD.csv","w+");
-	printf("\n File format: Time, Voltage(Torque), Postion(reference), Position(measured)\n");
+	printf("\n File format: Time, Voltage(Torque reference), Postion(reference), Position(measured)\n");
+	printf("File exporting... \n");
 	for(i=0;i<Tcon;i++){
 		fprintf(resfile,"%f %f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataXref[i],tmpDataX[i]);
 		//File format: Time, Voltage(Torque), Postion(reference), Position(measured)
