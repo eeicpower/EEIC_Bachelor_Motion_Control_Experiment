@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 	///////////////////////////////////////////////
 	int i, cntnum, beep;
 	unsigned char 	OutChar=0;
-	double theta1, ExtRef, Vout=0.0, W=0.0, X_old=0.0;
+	double ExtRef, Vout=0.0, W=0.0, X_old=0.0;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
@@ -400,7 +400,7 @@ int main(int argc, char *argv[])
 		ExtRef=Adtransfer(1);	// Analog date read(FG signal read)
 		
 		T_ref=ExtRef*(1.0-exp(-T_smpl*(double)i));	//Filter for prevention of sudden start
-		//T_ref=ExtRef;								//Without filter
+		//T_ref=ExtRef;		//Without filter
 		
 		Vout=T_ref;//Torque -> Voltage reference
 
@@ -429,10 +429,11 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("Result_ID.csv","w+");
-	printf("\n File format: Time, Voltage(Torque), Angular speed\n");
+	printf("\n File format: Time, Voltage(Torque reference), Angular speed\n");
+	printf("File exporting... \n");
 	for(i=0;i<Tcon;i++){
 		fprintf(resfile,"%f %f %f\n",i*T_smpl,tmDataV[i],tmpDataW[i]);
-		//File format: Time, Voltage(Torque), Angular speed
+		//File format: Time, Voltage(Torque reference), Angular speed
 	}
 	fclose(resfile);
 
