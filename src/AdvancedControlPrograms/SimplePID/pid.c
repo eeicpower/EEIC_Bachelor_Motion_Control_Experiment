@@ -40,7 +40,7 @@ double X, X_ref;
 double Kp, Kd, Ki;
 double Tau;
 double T_smpl=0.0;
-double a1, b0, c0;
+double a1, b0, b1, c0;
 //double c1, c2, cu;
 double dX,ddX;
 //double I01, I01_1=0.0, I0n,I0n_1=0.0;
@@ -56,11 +56,11 @@ double control(double Xref,double Xmeas)
 	V1 = V1_1 + (Vn+Vn_1)*T_smpl/2.0;
 	V2 = V2_1 + (V1+V1_1)*T_smpl/2.0;
 
-	V0 = c0*dX - b0*V2;
+	V0 = c0*dX + b0*V2 + b1*V1;
 
-	Vn = Vn_1;
-	V1 = V1_1;
-	V2 = V2_1;
+	Vn_1 = Vn;
+	V1_1 = V1;
+	V2_1 = V2;
 
 /*
 	u = Xref - Xmeas; 
@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
 	////////////////* current limit *//////////////
 	///////////////////////////////////////////////
 	V_limit=-1;
-	while(V_limit < 0 && V_limit > Max_T){
+	while(V_limit < 0 || V_limit > Max_T){
 		printf("\n Torque limit [Nm] (9.0 Nm) :");
 		scanf("%lf",&V_limit);
 	}
@@ -326,7 +326,8 @@ int main(int argc, char *argv[])
 	}
 	Tau /=1000.0;
 	a1=1.0/Tau;
-	b0=Ki*Kd/Tau/Tau;
+	b1=Ki-Kd/Tau/Tau;
+	b0=Ki/Tau;
 	c0=Kp+Kd/Tau;
 	
 
