@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <sys/io.h>
 #include <sys/signal.h>
+#include <time.h>
 #include <math.h>
 #include <fbida.h>
 #include <fbiad.h>
@@ -385,6 +386,11 @@ int main(int argc, char *argv[])
 	////////////////////////////////////////////
 	//////* real time system start *////////////
 	////////////////////////////////////////////
+	struct timespec ts, te;
+	printf("time():  %10ld\n", time(NULL));
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	printf("time:    %10ld.%09ld CLOCK_REALTIME\n", ts.tv_sec, ts.tv_nsec);
+
 	for (i = 0; i < Tcon; ++i) {
 
 		if(OutChar==1){
@@ -426,6 +432,16 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 	}
+
+	clock_gettime(CLOCK_MONOTONIC, &te);
+	printf("time:    %10ld.%09ld CLOCK_REALTIME\n", te.tv_sec, te.tv_nsec);
+	printf("Past time = ");
+	if (te.tv_nsec < ts.tv_nsec) {
+		printf("%10ld.%09ld", te.tv_sec - ts.tv_sec - 1	,te.tv_nsec + 1000000000 - ts.tv_nsec);
+	} else {
+		printf("%10ld.%09ld", te.tv_sec - ts.tv_sec ,te.tv_nsec - ts.tv_nsec);
+	}
+	printf("[sec]\n");
 
 	Datransfer(1,0.0);
 	resfile=fopen("Result_ID.csv","w+");
