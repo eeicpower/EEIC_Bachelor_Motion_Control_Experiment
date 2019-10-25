@@ -521,7 +521,8 @@ int main(int argc, char *argv[])
 
 	Datransfer(1,0.0);
 	resfile=fopen("result_DOB.csv","w+");
-	printf("\n File format: Time, Voltage(Torque), Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]\n");
+	printf("\n File format: Time, Voltage(Torque reference), Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]\n");
+	printf("File exporting... \n");
 	for(i=0;i<Tcon;i++){
 		fprintf(resfile,"%f %f %f %f %f\n",i*T_smpl,tmpDataV[i],tmpDataXref[i],tmpDataX[i],tmpDataTdist[i]);
 		//File format: Time, Voltage(Torque), Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]
