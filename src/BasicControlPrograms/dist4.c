@@ -25,7 +25,7 @@ int Tcon, Ts;
 double V_limit;
 
 /* motor constants */
-double Jn; //[kgm^2]
+double Jn, Dn; //[kgm^2], [kgm/s]
 double Ktn = 1.8; //[Nm/V]
 	//motor is converted in 2015
 	// D/A output:-5[V]~5[V]
@@ -325,9 +325,12 @@ int main(int argc, char *argv[])
 	////////////* control variables *//////////////
 	///////////////////////////////////////////////
 	Jn=-1;
-	while(Jn<=0){
-		printf("\n Jn (nominal inertia [kgm2]) (0.005) :");
+	Dn=-1;
+	while(Jn<=0 || Dn<0){
+		printf("\n Jn (nominal inertia [kgm^2]) (0.005) :");
 		scanf("%lf",&Jn);
+		printf("\n Dn (nominal viscous friction constant [kgm/s]) (0.03) :");
+		scanf("%lf",&Dn);
 	}
 	printf("\n Kp (propotional gain) :");
 	scanf("%lf",&Kp);
@@ -352,14 +355,14 @@ int main(int argc, char *argv[])
 	a0 = 1.0/Tq/Tq;
 	a1 = 2.0/Tq;
 	b0 = 1.0/Tq/Tq;
-	b1 = 2.0/Tq;
+	b1 = 2.0/Tq-Dn/Jn;
 	c0 = Jn/Ktn/Tq/Tq;
 
 
 	///////////////////////////////////////////////
 	/////* printout of the control parameters *////
 	///////////////////////////////////////////////
-	printf("\n motor constants :\n Jn = %f [kgm2], Ktn = %f [Nm/V]",Jn,Ktn);
+	printf("\n motor constants :\n Jn = %f [kgm2], Dn = %f [kgm/s], Ktn = %f [Nm/V]",Jn,Dn,Ktn);
 	printf("\n position controller gain :\n Kp = %f [V/rad], Kd = %f [V/(rad/s)]",Kp,Kd);
 	printf("\n Q filter parameters :\n Tq = %f [ms]",Tq*1000.0);
 
