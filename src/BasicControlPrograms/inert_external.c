@@ -22,6 +22,8 @@
 
 #define ENC_RESL 312500.0
 
+//time_t time(time_t *t);
+
 int Tcon, Ts;
 double V_limit;
 
@@ -31,12 +33,12 @@ double Ktn = 1.8; //[Nm/V]
 	//motor is converted in 2015
 	// D/A output:-5[V]~5[V]
 	// Corresponding torque:-9[Nm]~9[Nm]
-double Max_T = 9.0;
-	// Maximum torque of motor driver
+double Max_V = 5.0;
+	// Maximum voltage reference of motor driver
 
 
 /* controller variables definition */
-double X, T_ref;
+double X;
 double T_smpl=0.0;
 
 
@@ -45,6 +47,7 @@ int enc_init(){
 	fprintf(stderr,"Encoder ADRESS: %4x\n",ENCADRES0);
 	outb(0x6,ENCADRES0 + 0x04);
 	outb(0x6,ENCADRES0 + 0x14);
+	printf("Encorder initialization finish");
 	return 0;
 }
 //////////////////////////////////////////////
@@ -211,7 +214,7 @@ void ctlstop(){
 	unsigned char 	OutChar;
 	OutChar=0;
 	outb(OutChar, LP0_PORT);
-	fprintf(stderr,"motor-stop\n");
+	fprintf(stderr,"Program-stop\n");
 	Datransfer(1,0.0);
 
 	if(DaClose(1)==-1||AdClose(1)){
@@ -248,6 +251,7 @@ int main(int argc, char *argv[])
 	DASMPLREQ Conf;
 	FILE *resfile;
 	double *tmDataV, *tmpDataW;
+	struct timespec ts, te;
 
 	///////////////////////////////////////////////
 	////////////////* sampling time *//////////////
@@ -262,11 +266,10 @@ int main(int argc, char *argv[])
 	////////////////* current limit *//////////////
 	///////////////////////////////////////////////
 	V_limit=-1;
-	while(V_limit < 0 || V_limit > Max_T){
-		printf("\n Torque limit [Nm] (9.0 Nm) :");
+	while(V_limit < 0 || V_limit > Max_V){
+		printf("\n Voltage limit [V] (5.0 V) :");
 		scanf("%lf",&V_limit);
 	}
-	V_limit/=Ktn; 
 
 	///////////////////////////////////////////////
 	/////* printout of the control parameters *////
@@ -312,14 +315,15 @@ int main(int argc, char *argv[])
 		perror("art_enter");
 		exit(1);
 	}
+	printf("\n Real time system now Open!!\n");
 	T_smpl=(double)Ts/1000000;
 
 	////////////////////////////////////////////
 	//////* DA open, initialize *///////////////
 	////////////////////////////////////////////
+	printf("DA board initialization start...\n");
 
 	dnum=1;
-
 	res = DaGetSamplingConfig(dnum, &Conf);
 	if(res){
 		printf("DaGetSamplingConfig error: res=%x\n", res);
@@ -349,11 +353,14 @@ int main(int argc, char *argv[])
 		DaClose(dnum);
 		exit(EXIT_FAILURE);
 	}
+	
+	printf("DA board initialization succeeded\n");
 
 	////////////////////////////////////////////
 	//////* AD open, initialize *///////////////
 	////////////////////////////////////////////
-
+	printf("AD board initialization start...\n");
+	
 	memset(&Smplreq, 0, sizeof(ADSMPLREQ));
 	res = AdGetSamplingConfig(1,&Smplreq);
 	if(res){
@@ -382,14 +389,13 @@ int main(int argc, char *argv[])
 		AdClose(dnum);DaClose(dnum);
 		exit(EXIT_FAILURE);
 	}
+	printf("AD board initialization succeeded\n");
 	
 	////////////////////////////////////////////
 	//////* real time system start *////////////
 	////////////////////////////////////////////
-	struct timespec ts, te;
-	printf("time():  %10ld\n", time(NULL));
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	printf("time:    %10ld.%09ld CLOCK_REALTIME\n", ts.tv_sec, ts.tv_nsec);
+	clock_gettime(CLOCK_REALTIME, &ts);
+	printf("Start time:    %10ld.%09ld CLOCK_REALTIME\n", ts.tv_sec, ts.tv_nsec);
 
 	for (i = 0; i < Tcon; ++i) {
 
@@ -405,10 +411,8 @@ int main(int argc, char *argv[])
 		X=read_theta(1);		// Read motor postion(angle)
 		ExtRef=Adtransfer(1);	// Analog date read(FG signal read)
 		
-		T_ref=ExtRef*(1.0-exp(-T_smpl*(double)i));	//Filter for prevention of sudden start
-		//T_ref=ExtRef;		//Without filter
-		
-		Vout=T_ref;//Torque -> Voltage reference
+		Vout=ExtRef*(1.0-exp(-T_smpl*(double)i));	//Filter for prevention of sudden start
+		//Vout=ExtRef;		//Without filter
 
 		if(Vout>=V_limit) Vout = V_limit;
 		if(Vout<= -V_limit) Vout = -V_limit;
@@ -433,16 +437,16 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	clock_gettime(CLOCK_MONOTONIC, &te);
-	printf("time:    %10ld.%09ld CLOCK_REALTIME\n", te.tv_sec, te.tv_nsec);
-	printf("Past time = ");
+	clock_gettime(CLOCK_REALTIME, &te);
+	printf("End time:    %10ld.%09ld CLOCK_REALTIME\n", te.tv_sec, te.tv_nsec);
+	printf("True operating time = ");
 	if (te.tv_nsec < ts.tv_nsec) {
 		printf("%10ld.%09ld", te.tv_sec - ts.tv_sec - 1	,te.tv_nsec + 1000000000 - ts.tv_nsec);
 	} else {
 		printf("%10ld.%09ld", te.tv_sec - ts.tv_sec ,te.tv_nsec - ts.tv_nsec);
 	}
 	printf("[sec]\n");
-
+	
 	Datransfer(1,0.0);
 	resfile=fopen("Result_ID.csv","w+");
 	printf("\n File format: Time, Voltage(Torque reference), Angular speed\n");
@@ -452,6 +456,7 @@ int main(int argc, char *argv[])
 		//File format: Time, Voltage(Torque reference), Angular speed
 	}
 	fclose(resfile);
+	printf("File exporting finished");
 
 	free(tmDataV);
 	free(tmpDataW);
