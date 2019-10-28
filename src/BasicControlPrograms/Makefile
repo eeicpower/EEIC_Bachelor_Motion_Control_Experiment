@@ -16,4 +16,4 @@ inert_internal: inert_internal.c
 	gcc -Wall -O2 -o inert_internal inert_internal.c /usr/lib/art_syscalls.o -lgpg3100 -lgpg3300
 
 inert_external: inert_external.c
-	gcc -Wall -O2 -o inert_external inert_external.c /usr/lib/art_syscalls.o -lgpg3100 -lgpg3300
+	gcc -lrt -Wall -O2 -o inert_external inert_external.c /usr/lib/art_syscalls.o -lgpg3100 -lgpg3300
