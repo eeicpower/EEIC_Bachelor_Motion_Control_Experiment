@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 		Datransfer(1,Vout);
 		Datransfer(2,X);
 		
-		tmpDataV[i]=T_ref;
+		tmpDataV[i]=Vout;
 		tmpDataXref[i]=X_ref;
 		tmpDataX[i]=X;
 
