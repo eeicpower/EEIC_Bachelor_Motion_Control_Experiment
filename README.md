@@ -1,5 +1,6 @@
 # EEIC_Bachelor_Motion_Control_Experiment
-EEICの後期実験で利用する制御プログラムを公開しています。
+EEICの後期実験で利用する制御プログラムを公開しています。  
+最新リリース版を利用してください。
 ## プログラム構成
 ![DirTree](https://github.com/eeicpower/EEIC_Bachelor_Motion_Control_Experiment/blob/pict/pict/programConf.PNG)
                                                     
