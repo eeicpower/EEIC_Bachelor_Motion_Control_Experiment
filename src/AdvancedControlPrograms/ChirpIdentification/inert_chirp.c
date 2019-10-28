@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
 	////////////* current amplitude *//////////////
 	///////////////////////////////////////////////
 	Ta=-1;
-	while(Ta < 0 && Ta > Max_T){
+	while(Ta < 0 || Ta > Max_T){
 		printf("\n Torque amplitude [Nm] (3.6 Nm) :");
 		scanf("%lf",&Ta);
 	}
