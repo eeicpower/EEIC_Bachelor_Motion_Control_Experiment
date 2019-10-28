@@ -1,9 +1,9 @@
 clear allvars;
 
-J = 0.005;  %inertia
-D = 0.026;  %Damping
-Kt = 1.2;   %Torque transform ratio
-wp = 20;    %Pole 
+J = 0.0052;  %inertia
+D = 0.034;  %Damping
+Kt = 1.8;   %Torque transform ratio
+wp = 10;    %Pole should be larger than that of plant
 Ku = 10;    %limit Kp gain
 Pu = 0.2;   %Time period at Ku
 SigNum = 3; %Significant number
@@ -35,6 +35,23 @@ disp(strcat('PID Gain: [tau, Kp, Kd, Ki]=[', num2str(round(tau,SigNum,'significa
 disp(strcat('PID Gain by ZN: [Kp, Kd, Ki]=[', num2str(round(0.5*Ku,SigNum,'significant')),',', num2str(round(2/Pu,SigNum,'significant')),',', num2str(round(Pu/8,SigNum,'significant')),']'));
 
 
+%% evaluation of controller
+
+s=tf('s');
+P=1*Kt/(1*J*s^2+1*D*s);
+
+figure(1);
+step(Cpid*P/(1+Cpid*P),Cpd*P/(1+Cpd*P));
+legend({'PID','PD'});
+hold on;
+%{
+figure(2);
+nyquist(Cpid*P,Cpd*P);
+xlim([-3 1]);
+ylim([-5 5]);
+legend({'PID','PD'});
+hold on;
+%}
 
 function [Cpd,Coeff] = designPD(Kt,J,D,wp)
 
