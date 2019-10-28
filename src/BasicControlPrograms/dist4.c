@@ -30,8 +30,8 @@ double Ktn = 1.8; //[Nm/V]
 	//motor is converted in 2015
 	// D/A output:-5[V]~5[V]
 	// Corresponding torque:-9[Nm]~9[Nm]
-double Max_T = 9.0;
-	// Maximum torque of motor driver
+double Max_V = 5.0;
+	// Maximum voltage reference of motor driver
 
 /* controller variables definition */
 double T_ref=0.0;
@@ -267,7 +267,7 @@ void ctlstop(){
 	unsigned char 	OutChar;
 	OutChar=0;
 	outb(OutChar, LP0_PORT);
-	fprintf(stderr,"motor-stop\n");
+	fprintf(stderr,"Program-stop\n");
 	Datransfer(1,0.0);
 
 	if(DaClose(1)==-1||AdClose(1)){
@@ -315,11 +315,10 @@ int main(int argc, char *argv[])
 	////////////////* current limit *//////////////
 	///////////////////////////////////////////////
 	V_limit=-1;
-	while(V_limit < 0 || V_limit > Max_T){
-		printf("\n Torque limit [Nm] (9.0 Nm) :");
+	while(V_limit < 0 || V_limit > Max_V){
+		printf("\n Voltage limit [V] (5.0 V) :");
 		scanf("%lf",&V_limit);
 	}
-	V_limit/=Ktn; 
 
 	///////////////////////////////////////////////
 	////////////* control variables *//////////////
@@ -407,14 +406,15 @@ int main(int argc, char *argv[])
 		perror("art_enter");
 		exit(1);
 	}
+	printf("\n Real time system now Open!!\n");
 	T_smpl=(double)Ts/1000000;
 
 	////////////////////////////////////////////
 	//////* DA open, initialize *///////////////
 	////////////////////////////////////////////
+	printf("DA board initialization start...\n");
 
 	dnum=1;
-
 	res = DaGetSamplingConfig(dnum, &Conf);
 	if(res){
 		printf("DaGetSamplingConfig error: res=%x\n", res);
@@ -444,11 +444,14 @@ int main(int argc, char *argv[])
 		DaClose(dnum);
 		exit(EXIT_FAILURE);
 	}
+	
+	printf("DA board initialization succeeded\n");
 
 	////////////////////////////////////////////
 	//////* AD open, initialize *///////////////
 	////////////////////////////////////////////
-
+	printf("AD board initialization start...\n");
+	
 	memset(&Smplreq, 0, sizeof(ADSMPLREQ));
 	res = AdGetSamplingConfig(1,&Smplreq);
 	if(res){
@@ -477,6 +480,7 @@ int main(int argc, char *argv[])
 		AdClose(dnum);DaClose(dnum);
 		exit(EXIT_FAILURE);
 	}
+	printf("AD board initialization succeeded\n");
 	
 	////////////////////////////////////////////
 	//////* real time system start *////////////
@@ -531,6 +535,7 @@ int main(int argc, char *argv[])
 		//File format: Time, Voltage(Torque), Position(reference)[rad], Position(measured)[rad], Disturbance[Nm]
 	}
 	fclose(resfile);
+	printf("File exporting finished");
 
 	free(tmpDataV);
 	free(tmpDataX);
