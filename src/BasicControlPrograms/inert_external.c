@@ -22,8 +22,6 @@
 
 #define ENC_RESL 312500.0
 
-//time_t time(time_t *t);
-
 int Tcon, Ts;
 double V_limit;
 
