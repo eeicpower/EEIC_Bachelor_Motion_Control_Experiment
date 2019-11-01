@@ -31,13 +31,13 @@ double Ktn = 1.8; //[Nm/V]
 	//motor is converted in 2015
 	// D/A output:-5[V]~5[V]
 	// Corresponding torque:-9[Nm]~9[Nm]
-double Max_T = 9.0;
-	// Maximum torque of motor driver
+double Max_V = 5.0;
+	// Maximum voltage reference of motor driver
 
 /* controller variables definition */
 /* controller variables definition */
 double X;
-double Freq, ang_freq, Ta; // Freq: reference current frequency, ang_freq: angular frequency 
+double Freq, ang_freq, Va; // Freq: reference current frequency, ang_freq: angular frequency 
 double X, X_ref;
 double T_smpl=0.0, Time = 0.0;
 double fmin, fmax, charptime;
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
 	////////////////* current limit *//////////////
 	///////////////////////////////////////////////
 	V_limit=-1;
-	while(V_limit < 0 || V_limit > Max_T){
+	while(V_limit < 0 || V_limit > Max_V){
 		printf("\n Torque limit [Nm] (9.0 Nm) :");
 		scanf("%lf",&V_limit);
 	}
@@ -274,13 +274,12 @@ int main(int argc, char *argv[])
 	///////////////////////////////////////////////
 	////////////* current amplitude *//////////////
 	///////////////////////////////////////////////
-	Ta=-1;
-	while(Ta < 0 || Ta > Max_T){
-		printf("\n Torque amplitude [Nm] (3.6 Nm) :");
-		scanf("%lf",&Ta);
+	Va=-1;
+	while(Va < 0 || Va > Max_V){
+		printf("\n Chirp amplitude [V] (2 V) :");
+		scanf("%lf",&Va);
 	}
-	Ta/=Ktn; 
-
+	
 
 	///////////////////////////////////////////////
 	////////////* chirp parameters *///////////////
@@ -426,7 +425,7 @@ int main(int argc, char *argv[])
 		Time += T_smpl;
 		ctrl_ident_chirplin(Time,&Vout,fmin,fmax,charptime);// make chirp signal
 
-		Vout*=Ta;
+		Vout*=Va;
 
 		if(Vout>=V_limit) Vout = V_limit;
 		if(Vout<=-V_limit) Vout = -V_limit;
