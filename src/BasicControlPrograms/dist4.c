@@ -57,7 +57,7 @@ double V_dist = 0.0;
 /*----------------------------------------------*/
 double control(double Xref,double Xmeas,double Vref)
 {
-	double Vout;
+	double Vref;
 /* VO */
 	dX = Xref - Xmeas;
 	V0n = dX - a0X*V01_1;
@@ -89,10 +89,10 @@ double control(double Xref,double Xmeas,double Vref)
 	V22d_1 = V22d;
 	V21d_1 = V21d;
 
-/* Vout */
+/* Vref */
 	V_dist = V1 - V2;//Disturbance converted into voltage
-	Vout = V0 + V_dist;
-	return Vout;
+	Vref = V0 + V_dist;
+	return Vref;
 }
 /*----------------------------------------------*/
 
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
 {
 	int i, cntnum, beep;
 	unsigned char 	OutChar=0;
-	double ExtRef, Vout=0.0;
+	double ExtRef, Vref=0.0;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
@@ -500,15 +500,15 @@ int main(int argc, char *argv[])
 		ExtRef=Adtransfer(1);
 		X_ref=ExtRef*(1.0-exp(-T_smpl*(double)i));
 	//	X_ref=ExtRef;
-		Vout=control(X_ref,X,Vout);
+		Vref=control(X_ref,X,Vref);
 
-		if(Vout>=V_limit) Vout = V_limit;
-		if(Vout<= -V_limit) Vout = -V_limit;
+		if(Vref>=V_limit) Vref = V_limit;
+		if(Vref<= -V_limit) Vref = -V_limit;
 
-		Datransfer(1,Vout);
+		Datransfer(1,Vref);
 		Datransfer(2,V_dist);
 
-		tmpDataV[i]=Vout;
+		tmpDataV[i]=Vref;
 		tmpDataX[i]=X;
 		tmpDataXref[i]=X_ref;
 		tmpDataTdist[i]=V_dist*Ktn;

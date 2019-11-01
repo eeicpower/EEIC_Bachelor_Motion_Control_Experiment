@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 {
 	int i, cntnum,beep;
 	unsigned char 	OutChar=0;
-	double X, Vout, w=0.0, W=0.0, X_old=0.0;
+	double X, Vref, w=0.0, W=0.0, X_old=0.0;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
@@ -423,20 +423,20 @@ int main(int argc, char *argv[])
 		X=read_theta(1);
 		
 		Time += T_smpl;
-		ctrl_ident_chirplin(Time,&Vout,fmin,fmax,charptime);// make chirp signal
+		ctrl_ident_chirplin(Time,&Vref,fmin,fmax,charptime);// make chirp signal
 
-		Vout*=Va;
+		Vref*=Va;
 
-		if(Vout>=V_limit) Vout = V_limit;
-		if(Vout<=-V_limit) Vout = -V_limit;
+		if(Vref>=V_limit) Vref = V_limit;
+		if(Vref<=-V_limit) Vref = -V_limit;
 
-		Datransfer(1,Vout);//Output signal
+		Datransfer(1,Vref);//Output signal
 
 		W=(X-X_old)/T_smpl;//angular speed
 		X_old=X;
 
 		tmpDataW[i]=W;
-		tmpDataV[i]=Vout;
+		tmpDataV[i]=Vref;
 		Datransfer(2,W/10.0);
 		
 		if (art_wait() == -1) {

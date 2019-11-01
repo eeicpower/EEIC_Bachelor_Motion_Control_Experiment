@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 	///////////////////////////////////////////////
 	int i, cntnum, beep;
 	unsigned char 	OutChar=0;
-	double ExtRef, Vout=0.0, W=0.0, X_old=0.0;
+	double ExtRef, Vref=0.0, W=0.0, X_old=0.0;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
@@ -425,18 +425,18 @@ int main(int argc, char *argv[])
 		Time += T_smpl;
 		T_ref=Ta*sin(ang_freq*Time);//exitation signal generation
 
-		Vout=T_ref;//Torque -> Voltage reference
+		Vref=T_ref;//Torque -> Voltage reference
 
-		if(Vout>=V_limit) Vout = V_limit;
-		if(Vout<=-V_limit) Vout = -V_limit;
+		if(Vref>=V_limit) Vref = V_limit;
+		if(Vref<=-V_limit) Vref = -V_limit;
 
-		Datransfer(1,Vout);//Output signal
+		Datransfer(1,Vref);//Output signal
 
 		W=(X-X_old)/T_smpl;//angular speed
 		X_old=X;
 
 		tmpDataW[i]=W;
-		tmpDataV[i]=Vout;
+		tmpDataV[i]=Vref;
 		Datransfer(2,W/10.0);
 		
 		if (art_wait() == -1) {

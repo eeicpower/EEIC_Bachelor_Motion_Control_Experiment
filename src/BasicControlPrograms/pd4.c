@@ -60,7 +60,7 @@ double control(double Xref,double Xmeas)
 	
 	V0 = Kp * dX + Kd * ddX;
 
-/* Vout */
+/* Vref */
 	return V0;
 }
 /*----------------------------------------------*/
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
 {
 	int i, cntnum, beep;
 	unsigned char 	OutChar=0;
-	double ExtRef, Vout;
+	double ExtRef, Vref;
 	int res,dnum;
 	unsigned long ulpNum;
 	ADSMPLREQ Smplreq;
@@ -444,12 +444,12 @@ int main(int argc, char *argv[])
 		ExtRef=Adtransfer(1);//reference voltage[V]
 		X_ref=ExtRef*(1.0-exp(-T_smpl*(double)i));//reference position[rad]: V -> rad
 		T_ref=control(X_ref,X);
-		Vout=T_ref; //Torque -> Voltage reference
+		Vref=T_ref; //Torque -> Voltage reference
 
-		if(Vout>=V_limit) Vout = V_limit;
-		if(Vout<=-V_limit) Vout = -V_limit;
+		if(Vref>=V_limit) Vref = V_limit;
+		if(Vref<=-V_limit) Vref = -V_limit;
 
-		Datransfer(1,Vout);
+		Datransfer(1,Vref);
 		Datransfer(2,X);
 		
 		tmpDataV[i]=T_ref;
