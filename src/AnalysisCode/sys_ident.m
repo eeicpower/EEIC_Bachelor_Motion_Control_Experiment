@@ -3,13 +3,13 @@ clearvars;
 close all;
 freq = 1000; %1kHz
 Ts = 1/freq; %Sampling time
-Tc = 5; %Chirp period
+Tc = 10; %Chirp period
 Kt = 1.8; %transformation ratio from V to Nm 
 
 %% tfest fitting part
 Nz = 0;%Number of zeros of the plant
 Np = 1;%Number of poles of the plant
-fmin=0.1; %minimum freq of chirp signal 
+fmin=0.2; %minimum freq of chirp signal 
 fmax=100; %maximum freq of chirp signal
 Td = 0:0.1e-3:5e-3;% DelayTime search range: 0 to 5ms with 0.1ms step
 
