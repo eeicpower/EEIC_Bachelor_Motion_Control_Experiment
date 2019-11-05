@@ -1,9 +1,16 @@
 clear allvars;
 
+<<<<<<< Updated upstream
 J = 0.005;  %inertia
 D = 0.026;  %Damping
 Kt = 1.2;   %Torque transform ratio
 wp = 20;    %Pole 
+=======
+J = 0.0052;  %inertia
+D = 0.034;  %Damping
+Kt = 1.8;   %Torque transform ratio
+wp = 50;    %Pole should be larger than that of plant
+>>>>>>> Stashed changes
 Ku = 10;    %limit Kp gain
 Pu = 0.2;   %Time period at Ku
 SigNum = 3; %Significant number
@@ -35,6 +42,26 @@ disp(strcat('PID Gain: [tau, Kp, Kd, Ki]=[', num2str(round(tau,SigNum,'significa
 disp(strcat('PID Gain by ZN: [Kp, Kd, Ki]=[', num2str(round(0.5*Ku,SigNum,'significant')),',', num2str(round(2/Pu,SigNum,'significant')),',', num2str(round(Pu/8,SigNum,'significant')),']'));
 
 
+<<<<<<< Updated upstream
+=======
+%% evaluation of controller
+
+s=tf('s');
+P=1*Kt/(0.61*J*s^2+1.1*D*s);
+
+% figure(1);
+% step(Cpid*P/(1+Cpid*P),Cpd*P/(1+Cpd*P));
+% legend({'PID','PD'});
+% hold on;
+%
+figure(2);
+nyquist(Cpd*P);
+%xlim([-3 1]);
+%ylim([-5 5]);
+legend({'PID','PD'});
+hold on;
+%}
+>>>>>>> Stashed changes
 
 function [Cpd,Coeff] = designPD(Kt,J,D,wp)
 
